@@ -1,0 +1,45 @@
+	.pos 0 
+init:	irmovl Stack, %esp  	# Set up stack pointer  
+	irmovl Stack, %ebp  	# Set up base pointer   
+	call Main		# Execute main program
+	halt			# Terminate program 
+
+	.align 4 	
+ele1:	.long 0x00a
+	.long ele2
+ele2:	.long 0x0b0
+	.long ele3
+ele3:	.long 0xc00
+	.long 0	
+
+Main:	pushl %ebp
+	rrmovl %esp,%ebp
+	irmovl ele1,%edx
+	pushl %edx      	# Push ele1
+	call sum_list		# sum_list(ele1)
+	rrmovl %ebp,%esp
+	popl %ebp
+	ret 
+
+/* $begin sum-ys 0 */
+	# int sum_list(list_ptr ls)
+sum_list:	pushl	%ebp
+		rrmovl	%esp,%ebp
+		mrmovl	8(%ebp),%ecx
+		xorl	%eax,%eax
+		andl	%ecx,%ecx
+		je	End
+	Loop:	mrmovl	(%ecx),%esi
+		addl	%esi,%eax
+		mrmovl	4(%ecx), %esi
+		rrmovl	%esi, %ecx
+		andl	%ecx, %ecx
+		jne	Loop
+	End:	rrmovl	%ebp,%esp
+		popl	%ebp
+		ret
+/* $end sum-ys 0 */
+
+# The stack starts here and grows to lower addresses
+	.pos 0x100		
+Stack:

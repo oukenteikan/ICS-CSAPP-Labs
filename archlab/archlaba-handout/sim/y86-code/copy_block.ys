@@ -1,0 +1,50 @@
+	.pos 0 
+init:	irmovl Stack, %esp  	# Set up stack pointer  
+	irmovl Stack, %ebp  	# Set up base pointer   
+	call Main		# Execute main program
+	halt			# Terminate program 
+
+	.align 4
+src:
+	.long 0x00a
+	.long 0x0b0
+	.long 0xc00
+dest:
+	.long 0x111
+	.long 0x222
+	.long 0x333	
+
+Main:	pushl %ebp
+	rrmovl %esp,%ebp
+	irmovl src, %edi
+	irmovl dest, %esi
+	irmovl $3, %edx
+	call copy_block
+	rrmovl %ebp,%esp
+	popl %ebp
+	ret 
+
+	# int copy_block(int *src, int *dest, int len)
+copy_block:	pushl	%ebp
+		rrmovl	%esp,%ebp
+		xorl	%eax,%eax
+		andl	%edx,%edx
+		je	End
+	Loop:	mrmovl	(%edi),%ecx
+		rmmovl  %ecx, (%esi)
+		xorl	%ecx, %eax
+		irmovl  $4, %ecx
+		addl	%ecx, %edi
+		addl    %ecx, %esi
+		irmovl	$-1, %ecx
+		addl	%ecx, %edx
+		andl	%edx, %edx
+		jne	Loop
+	End:	rrmovl	%ebp,%esp
+		popl	%ebp
+		ret
+/* $end sum-ys 0 */
+
+# The stack starts here and grows to lower addresses
+	.pos 0x100		
+Stack:

@@ -1,0 +1,50 @@
+  0x000:              | 	.pos 0 
+  0x000: 30f400010000 | init:	irmovl Stack, %esp  	# Set up stack pointer  
+  0x006: 30f500010000 | 	irmovl Stack, %ebp  	# Set up base pointer   
+  0x00c: 802c000000   | 	call Main		# Execute main program
+  0x011: 00           | 	halt			# Terminate program 
+                      | 
+  0x014:              | 	.align 4
+  0x014:              | src:
+  0x014: 0a000000     | 	.long 0x00a
+  0x018: b0000000     | 	.long 0x0b0
+  0x01c: 000c0000     | 	.long 0xc00
+  0x020:              | dest:
+  0x020: 11010000     | 	.long 0x111
+  0x024: 22020000     | 	.long 0x222
+  0x028: 33030000     | 	.long 0x333	
+                      | 
+  0x02c: a05f         | Main:	pushl %ebp
+  0x02e: 2045         | 	rrmovl %esp,%ebp
+  0x030: 30f714000000 | 	irmovl src, %edi
+  0x036: 30f620000000 | 	irmovl dest, %esi
+  0x03c: 30f203000000 | 	irmovl $3, %edx
+  0x042: 804c000000   | 	call copy_block
+  0x047: 2054         | 	rrmovl %ebp,%esp
+  0x049: b05f         | 	popl %ebp
+  0x04b: 90           | 	ret 
+                      | 
+                      | 	# int copy_block(int *src, int *dest, int len)
+  0x04c: a05f         | copy_block:	pushl	%ebp
+  0x04e: 2045         | 		rrmovl	%esp,%ebp
+  0x050: 6300         | 		xorl	%eax,%eax
+  0x052: 6222         | 		andl	%edx,%edx
+  0x054: 7380000000   | 		je	End
+  0x059: 501700000000 | 	Loop:	mrmovl	(%edi),%ecx
+  0x05f: 401600000000 | 		rmmovl  %ecx, (%esi)
+  0x065: 6310         | 		xorl	%ecx, %eax
+  0x067: 30f104000000 | 		irmovl  $4, %ecx
+  0x06d: 6017         | 		addl	%ecx, %edi
+  0x06f: 6016         | 		addl    %ecx, %esi
+  0x071: 30f1ffffffff | 		irmovl	$-1, %ecx
+  0x077: 6012         | 		addl	%ecx, %edx
+  0x079: 6222         | 		andl	%edx, %edx
+  0x07b: 7459000000   | 		jne	Loop
+  0x080: 2054         | 	End:	rrmovl	%ebp,%esp
+  0x082: b05f         | 		popl	%ebp
+  0x084: 90           | 		ret
+                      | /* $end sum-ys 0 */
+                      | 
+                      | # The stack starts here and grows to lower addresses
+  0x100:              | 	.pos 0x100		
+  0x100:              | Stack:

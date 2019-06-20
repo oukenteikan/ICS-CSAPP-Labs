@@ -1,0 +1,34 @@
+                      | # Execution begins at address 0
+  0x000:              | 	.pos 0
+  0x000: 30f400010000 | init:	irmovl Stack, %esp  	# Set up Stack pointer
+  0x006: 30f500010000 | 	irmovl Stack, %ebp  	# Set up base pointer
+  0x00c: 702c000000   | 	jmp Main		# Execute main program
+                      | 
+  0x014:              | 	.align 4
+  0x014: 0a000000     | ele1:	.long 0x00a
+  0x018: 1c000000     | 	.long ele2
+  0x01c: b0000000     | ele2:	.long 0x0b0
+  0x020: 24000000     | 	.long ele3
+  0x024: 000c0000     | ele3:	.long 0xc00
+  0x028: 00000000     | 	.long 0
+                      | 
+  0x02c: 30f214000000 | Main:	irmovl ele1, %edx
+  0x032: 8038000000   | 	call rsum	# rsum(ele1)
+  0x037: 00           | 	halt
+                      | 
+                      | /* $begin rsum-ys */
+                      | 	# int rsum(list_plt ls)
+  0x038: a03f         | rsum:	pushl %ebx           # Save value of %ebx
+  0x03a: 6300         | 	xorl %eax, %eax
+  0x03c: 6222         | 	andl %edx, %edx      # Test pointer
+  0x03e: 7356000000   | 	je End
+  0x043: 503200000000 | 	mrmovl (%edx), %ebx
+  0x049: 502204000000 | 	mrmovl 4(%edx), %edx
+  0x04f: 8038000000   | 	call rsum
+  0x054: 6030         | 	addl %ebx, %eax       # Add *Start
+  0x056: b03f         | End:	popl %ebx
+  0x058: 90           | 	ret
+                      | 
+                      | /* $end rsum-ys */
+  0x100:              | 	.pos 0x100
+  0x100:              | Stack:	# The stack goes here
