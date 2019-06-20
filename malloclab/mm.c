@@ -1,6 +1,6 @@
 /*
 Name: Charlie
-Student ID: 1500017773
+Student ID: 
 Course: ICS
 Lab: Malloc
 Approach: Segregated list && First hit
